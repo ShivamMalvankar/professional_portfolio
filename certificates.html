@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificates | Shivam Malvankar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Core Variables & Resets ── */
+    :root {
+      --bg: #050a12; --bg2: #0a1525; --bg3: #0d1e35;
+      --accent: #00d4ff; --accent2: #7c3aed; --accent3: #00ff88;
+      --text: #e2eaf4; --muted: #6b85a0; --border: rgba(0,212,255,0.15);
+      --glow: 0 0 20px rgba(0,212,255,0.4), 0 0 60px rgba(0,212,255,0.1);
+      --font-head: 'Syne', sans-serif; --font-mono: 'Space Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-mono); overflow-x: hidden; cursor: none; }
+
+    /* ── Cursor & Canvas ── */
+    #cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s; mix-blend-mode: screen; }
+    #cursor-trail { position: fixed; width: 36px; height: 36px; border: 1px solid rgba(0,212,255,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: left 0.12s ease, top 0.12s ease; }
+    a:hover ~ #cursor, button:hover ~ #cursor, .cert-card:hover ~ #cursor { transform: translate(-50%,-50%) scale(2.5); }
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ── Nav & Layout ── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 20px 60px; background: rgba(5,10,18,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: var(--font-head); font-size: 1.4rem; font-weight: 800; color: var(--accent); text-decoration: none; letter-spacing: -0.5px; }
+    .nav-logo span { color: var(--text); }
+    .btn-ghost { padding: 10px 24px; background: transparent; color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-decoration: none; border-radius: 4px; border: 1px solid var(--accent); cursor: none; transition: background 0.2s, box-shadow 0.3s; }
+    .btn-ghost:hover { background: rgba(0,212,255,0.08); box-shadow: var(--glow); }
+
+    /* ── Main Content ── */
+    main { position: relative; z-index: 1; padding: 120px 60px 60px; max-width: 1200px; margin: 0 auto; }
+    .page-title { font-family: var(--font-head); font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; letter-spacing: -2px; margin-bottom: 10px; }
+    .page-title span { color: var(--accent); }
+    .page-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 60px; }
+
+    /* ── Certificate Grid ── */
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 40px;
+    }
+    .cert-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: none;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .cert-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .cert-image-container {
+      width: 100%;
+      height: 280px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cert-image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .cert-card:hover .cert-image-container img {
+      transform: scale(1.03);
+    }
+    .cert-info {
+      padding: 20px 10px 10px;
+    }
+    .cert-title {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .cert-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ── Image Viewer Modal ── */
+    #image-modal {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #image-modal.active { display: flex; opacity: 1; }
+    #modal-img {
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 0 40px rgba(0,212,255,0.2);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    #image-modal.active #modal-img { transform: scale(1); }
+    .close-modal {
+      position: absolute; top: 30px; right: 40px;
+      color: var(--text); font-size: 2rem; font-family: var(--font-mono);
+      cursor: none; user-select: none; transition: color 0.2s;
+    }
+    .close-modal:hover { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      main { padding: 100px 24px 40px; }
+      .cert-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div><div id="cursor-trail"></div>
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <a href="index.html" class="nav-logo">Shivam<span>.dev</span></a>
+  <a href="index.html" class="btn-ghost">← Back to Portfolio</a>
+</nav>
+
+<main>
+  <h1 class="page-title">My <span>Certificates</span></h1>
+  <p class="page-subtitle">Click on any certificate to view it in full resolution.</p>
+
+  <div class="cert-grid">
+
+    <div class="cert-card" onclick="openModal('C:/Users/shivam/Downloads/python projects/data_science/Screenshot 2026-05-28 201738.png')">
+      <div class="cert-image-container">
+        <img src="C:/Users/shivam/Downloads/python projects/data_science/Screenshot 2026-05-28 201738.png" alt="Data Science Certificate">
+      </div>
+      <div class="cert-info">
+        <h3 class="cert-title">Machine Learning & Data Science</h3>
+        <div class="cert-meta">
+          <span>Udemy</span>
+          <span style="color: var(--accent);">2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cert-card" onclick="openModal('C:/Users/shivam/Downloads/python projects/data_science/udemy_certificate.jpeg')">
+      <div class="cert-image-container">
+        <img src="C:/Users/shivam/Downloads/python projects/data_science/udemy_certificate.jpeg" alt="Udemy Certificate">
+      </div>
+      <div class="cert-info">
+        <h3 class="cert-title">100 Days of Python / C Programming</h3>
+        <div class="cert-meta">
+          <span>Udemy</span>
+          <span style="color: var(--accent);">2025</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div id="image-modal" onclick="closeModal()">
+  <div class="close-modal">×</div>
+  <img id="modal-img" src="" alt="Full size certificate">
+</div>
+
+<script>
+  // Custom Cursor Logic
+  const cursor = document.getElementById('cursor');
+  const trail  = document.getElementById('cursor-trail');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px'; cursor.style.top  = e.clientY + 'px';
+    trail.style.left  = e.clientX + 'px'; trail.style.top   = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .cert-card, .close-modal').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursor.style.opacity = '0.6'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursor.style.opacity = '1'; });
+  });
+
+  // Canvas Particle Grid
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  class Particle {
+    constructor() { this.reset(); }
+    reset() { this.x = Math.random() * W; this.y = Math.random() * H; this.vx = (Math.random() - 0.5) * 0.3; this.vy = (Math.random() - 0.5) * 0.3; this.r = Math.random() * 1.5 + 0.5; this.a = Math.random() * 0.5 + 0.1; }
+    update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset(); }
+    draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(0,212,255,${this.a})`; ctx.fill(); }
+  }
+  for (let i = 0; i < 80; i++) particles.push(new Particle());
+  function drawLines() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 120) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(0,212,255,${0.08 * (1 - d/120)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function animate() { ctx.clearRect(0, 0, W, H); particles.forEach(p => { p.update(); p.draw(); }); drawLines(); requestAnimationFrame(animate); }
+  animate();
+
+  // Modal Logic for Certificates
+  const modal = document.getElementById('image-modal');
+  const modalImg = document.getElementById('modal-img');
+
+  function openModal(imageSrc) {
+    modalImg.src = imageSrc;
+    modal.style.display = 'flex';
+    // Small delay to allow display:flex to apply before adding opacity class for transition
+    setTimeout(() => {
+      modal.classList.add('active');
+    }, 10);
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modalImg.src = '';
+    }, 300); // Matches CSS transition time
+  }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+</script>
+</body>
+</html>

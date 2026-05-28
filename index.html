@@ -40,7 +40,8 @@
     #cursor {
       position: fixed; width: 12px; height: 12px;
       background: var(--accent); border-radius: 50%;
-      pointer-events: none; z-index: 9999;
+      pointer-events: none; /* FIX: Changed from auto to none */
+      z-index: 9999;
       transform: translate(-50%,-50%);
       transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
       mix-blend-mode: screen;
@@ -48,7 +49,8 @@
     #cursor-trail {
       position: fixed; width: 36px; height: 36px;
       border: 1px solid rgba(0,212,255,0.4); border-radius: 50%;
-      pointer-events: none; z-index: 9998;
+      pointer-events: none; /* FIX: Changed from auto to none */
+      z-index: 9998;
       transform: translate(-50%,-50%);
       transition: left 0.12s ease, top 0.12s ease;
     }
@@ -58,7 +60,8 @@
     #bg-canvas {
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
+      z-index: 0;
+      pointer-events: none; /* FIX: Changed from auto to none */
     }
 
     /* ── Scrollbar ── */
@@ -293,7 +296,9 @@
       color: var(--text);
       letter-spacing: 0.06em;
       transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s, color 0.2s;
-      cursor: default;
+      cursor: none; /* Changed for consistent custom cursor on links */
+      text-decoration: none; /* FIX: Added so links look like normal buttons */
+      display: block; /* FIX: Ensures anchor tags behave like the original divs */
     }
     .skill-chip:hover {
       border-color: var(--accent);
@@ -379,14 +384,24 @@
     }
     .project-tech {
       display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+      position: relative; z-index: 2; /* Elevate above card area slightly for clicks */
     }
     .tech-pill {
       font-size: 0.65rem; letter-spacing: 0.1em;
       padding: 4px 10px; border-radius: 4px;
       background: rgba(255,255,255,0.05);
       color: var(--muted); border: 1px solid rgba(255,255,255,0.08);
+      text-decoration: none; /* FIX: Added for clickable tags */
+      display: inline-block;
+      cursor: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .tech-pill:hover {
+      border-color: var(--accent);
+      color: var(--text);
     }
     .project-link {
+      position: relative; z-index: 999;
       font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--accent); text-decoration: none;
       display: inline-flex; align-items: center; gap: 6px;
@@ -428,7 +443,7 @@
       transform: translate(-50%, -50%);
       width: 500px; height: 300px;
       background: radial-gradient(ellipse, rgba(0,212,255,0.06) 0%, transparent 70%);
-      pointer-events: none;
+      pointer-events: auto;
     }
     .contact-tagline {
       font-family: var(--font-head); font-size: clamp(2rem, 5vw, 4rem);
@@ -497,14 +512,11 @@
 </head>
 <body>
 
-<!-- Custom Cursor -->
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 
-<!-- Canvas Background -->
 <canvas id="bg-canvas"></canvas>
 
-<!-- Navbar -->
 <nav>
   <a href="#hero" class="nav-logo">Shivam<span>.dev</span></a>
   <ul class="nav-links">
@@ -516,7 +528,6 @@
   </ul>
 </nav>
 
-<!-- Hero -->
 <section class="hero" id="hero">
   <div class="hero-tag fade-in">Based in Mumbai, India</div>
   <h1 class="fade-in fade-in-delay-1">
@@ -536,7 +547,6 @@
   </div>
 </section>
 
-<!-- About -->
 <section id="about">
   <div class="about-text">
     <div class="section-header fade-in">
@@ -575,7 +585,6 @@
   </div>
 </section>
 
-<!-- Projects -->
 <section id="projects">
   <div class="section-header fade-in" style="padding: 0 0 0 0;">
     <div class="section-number">02 / Work</div>
@@ -590,10 +599,10 @@
       <h3 class="project-title">Face Recognition System</h3>
       <p class="project-desc">Real-time face recognition using LBPH algorithm and Haar cascades. Supports multi-angle detection, full training pipeline, and live FPS tracking.</p>
       <div class="project-tech">
-        <span class="tech-pill">Python</span>
-        <span class="tech-pill">OpenCV</span>
-        <span class="tech-pill">LBPH</span>
-        <span class="tech-pill">Haar Cascades</span>
+        <a href="skills-details.html#python" class="tech-pill">Python</a>
+        <a href="skills-details.html#opencv" class="tech-pill">OpenCV</a>
+        <a href="skills-details.html#lbph" class="tech-pill">LBPH</a>
+        <a href="skills-details.html#haar-cascades" class="tech-pill">Haar Cascades</a>
       </div>
       <a href="https://github.com/ShivamMalvankar" class="project-link" target="_blank">
         View on GitHub <span>→</span>
@@ -606,9 +615,9 @@
       <h3 class="project-title">Instagram Automation Bot</h3>
       <p class="project-desc">Automated Instagram login and user actions using Selenium WebDriver. Handles dynamic UI elements with smart exception handling and human behavior simulation.</p>
       <div class="project-tech">
-        <span class="tech-pill">Python</span>
-        <span class="tech-pill">Selenium</span>
-        <span class="tech-pill">WebDriver</span>
+        <a href="skills-details.html#python" class="tech-pill">Python</a>
+        <a href="skills-details.html#selenium" class="tech-pill">Selenium</a>
+        <a href="skills-details.html#webdriver" class="tech-pill">WebDriver</a>
       </div>
       <a href="https://github.com/ShivamMalvankar" class="project-link" target="_blank">
         View on GitHub <span>→</span>
@@ -621,9 +630,9 @@
       <h3 class="project-title">Stock Market Alert Bot</h3>
       <p class="project-desc">Tracks live stock prices and fires SMS alerts via Twilio API when price conditions are met. Real-time data fetching with configurable triggers.</p>
       <div class="project-tech">
-        <span class="tech-pill">Python</span>
-        <span class="tech-pill">Twilio API</span>
-        <span class="tech-pill">REST APIs</span>
+        <a href="skills-details.html#python" class="tech-pill">Python</a>
+        <a href="skills-details.html#twilio" class="tech-pill">Twilio API</a>
+        <a href="skills-details.html#rest-apis" class="tech-pill">REST APIs</a>
       </div>
       <a href="https://github.com/ShivamMalvankar" class="project-link" target="_blank">
         View on GitHub <span>→</span>
@@ -636,9 +645,9 @@
       <h3 class="project-title">Amazon Price Tracker</h3>
       <p class="project-desc">Monitors Amazon product prices using BeautifulSoup. Automatically detects price drops and sends notifications — never miss a deal again.</p>
       <div class="project-tech">
-        <span class="tech-pill">Python</span>
-        <span class="tech-pill">BeautifulSoup</span>
-        <span class="tech-pill">Requests</span>
+        <a href="skills-details.html#python" class="tech-pill">Python</a>
+        <a href="skills-details.html#beautifulsoup" class="tech-pill">BeautifulSoup</a>
+        <a href="skills-details.html#requests" class="tech-pill">Requests</a>
       </div>
       <a href="https://github.com/ShivamMalvankar" class="project-link" target="_blank">
         View on GitHub <span>→</span>
@@ -648,7 +657,6 @@
   </div>
 </section>
 
-<!-- Skills -->
 <section id="skills">
   <div class="section-header fade-in">
     <div class="section-number">03 / Skills</div>
@@ -659,45 +667,44 @@
     <div class="skill-category fade-in">
       <h3>Languages</h3>
       <div class="skills-grid">
-        <div class="skill-chip"><span class="skill-icon">🐍</span>Python</div>
-        <div class="skill-chip"><span class="skill-icon">⚙️</span>C Programming</div>
-        <div class="skill-chip"><span class="skill-icon">➕</span>C++</div>
-        <div class="skill-chip"><span class="skill-icon">☕</span>Java (OOP)</div>
+        <a href="skills-details.html#python" class="skill-chip"><span class="skill-icon">🐍</span>Python</a>
+        <a href="skills-details.html#c" class="skill-chip"><span class="skill-icon">⚙️</span>C Programming</a>
+        <a href="skills-details.html#cpp" class="skill-chip"><span class="skill-icon">➕</span>C++</a>
+        <a href="skills-details.html#java" class="skill-chip"><span class="skill-icon">☕</span>Java (OOP)</a>
       </div>
     </div>
     <div class="skill-category fade-in fade-in-delay-1">
       <h3>Libraries & Frameworks</h3>
       <div class="skills-grid">
-        <div class="skill-chip"><span class="skill-icon">👁️</span>OpenCV</div>
-        <div class="skill-chip"><span class="skill-icon">🌐</span>Selenium</div>
-        <div class="skill-chip"><span class="skill-icon">🍲</span>BeautifulSoup</div>
-        <div class="skill-chip"><span class="skill-icon">📚</span>Python Libs</div>
+        <a href="skills-details.html#opencv" class="skill-chip"><span class="skill-icon">👁️</span>OpenCV</a>
+        <a href="skills-details.html#selenium" class="skill-chip"><span class="skill-icon">🌐</span>Selenium</a>
+        <a href="skills-details.html#beautifulsoup" class="skill-chip"><span class="skill-icon">🍲</span>BeautifulSoup</a>
+        <a href="skills-details.html#python-libs" class="skill-chip"><span class="skill-icon">📚</span>Python Libs</a>
       </div>
     </div>
     <div class="skill-category fade-in fade-in-delay-2">
       <h3>Concepts & Tools</h3>
       <div class="skills-grid">
-        <div class="skill-chip"><span class="skill-icon">🕷️</span>Web Scraping</div>
-        <div class="skill-chip"><span class="skill-icon">🔗</span>REST APIs</div>
-        <div class="skill-chip"><span class="skill-icon">🤖</span>Automation</div>
-        <div class="skill-chip"><span class="skill-icon">📊</span>Data Extraction</div>
-        <div class="skill-chip"><span class="skill-icon">🗄️</span>DBMS</div>
-        <div class="skill-chip"><span class="skill-icon">📦</span>JSON Handling</div>
+        <a href="skills-details.html#web-scraping" class="skill-chip"><span class="skill-icon">🕷️</span>Web Scraping</a>
+        <a href="skills-details.html#rest-apis" class="skill-chip"><span class="skill-icon">🔗</span>REST APIs</a>
+        <a href="skills-details.html#automation" class="skill-chip"><span class="skill-icon">🤖</span>Automation</a>
+        <a href="skills-details.html#data-extraction" class="skill-chip"><span class="skill-icon">📊</span>Data Extraction</a>
+        <a href="skills-details.html#dbms" class="skill-chip"><span class="skill-icon">🗄️</span>DBMS</a>
+        <a href="skills-details.html#json" class="skill-chip"><span class="skill-icon">📦</span>JSON Handling</a>
       </div>
     </div>
     <div class="skill-category fade-in fade-in-delay-3">
       <h3>Currently Learning</h3>
       <div class="skills-grid">
-        <div class="skill-chip"><span class="skill-icon">🧠</span>Machine Learning</div>
-        <div class="skill-chip"><span class="skill-icon">📈</span>Data Science</div>
-        <div class="skill-chip"><span class="skill-icon">🏗️</span>DSA</div>
-        <div class="skill-chip"><span class="skill-icon">🤖</span>AI Engineering</div>
+        <a href="skills-details.html#machine-learning" class="skill-chip"><span class="skill-icon">🧠</span>Machine Learning</a>
+        <a href="skills-details.html#data-science" class="skill-chip"><span class="skill-icon">📈</span>Data Science</a>
+        <a href="skills-details.html#dsa" class="skill-chip"><span class="skill-icon">🏗️</span>DSA</a>
+        <a href="skills-details.html#ai-engineering" class="skill-chip"><span class="skill-icon">🤖</span>AI Engineering</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Certifications -->
 <section id="certifications">
   <div class="section-header fade-in">
     <div class="section-number">04 / Credentials</div>
@@ -761,9 +768,13 @@
       <div class="cert-date">Feb–May 2025</div>
     </div>
   </div>
+
+  <div class="fade-in" style="margin-top: 48px; text-align: center;">
+    <a href="certificates.html" class="btn-ghost" style="display: inline-block;">View All Certificates</a>
+  </div>
+
 </section>
 
-<!-- Contact -->
 <section id="contact">
   <div class="contact-glow"></div>
   <div class="section-number fade-in">05 / Contact</div>
@@ -788,7 +799,6 @@
   </div>
 </section>
 
-<!-- Footer -->
 <footer>
   <p>© 2026 <span>Shivam Malvankar</span>. Built with passion.</p>
   <p style="font-size:0.72rem; color: var(--muted);">Mumbai, India 🇮🇳</p>
@@ -804,7 +814,9 @@
     trail.style.left  = e.clientX + 'px';
     trail.style.top   = e.clientY + 'px';
   });
-  document.querySelectorAll('a, button, .skill-chip, .project-card').forEach(el => {
+
+  /* Added .tech-pill so the custom cursor activates on project pills too */
+  document.querySelectorAll('a, button, .skill-chip, .project-card, .tech-pill').forEach(el => {
     el.addEventListener('mouseenter', () => {
       cursor.style.width = '20px'; cursor.style.height = '20px';
       cursor.style.opacity = '0.6';
